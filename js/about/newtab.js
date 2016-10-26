@@ -8,8 +8,11 @@ const Immutable = require('immutable')
 const messages = require('../constants/messages')
 const HTML5Backend = require('react-dnd-html5-backend')
 const { DragDropContext } = require('react-dnd')
-const Block = require('./newTabComponents/block')
+const Stats = require('./newTabComponents/stats')
 const Clock = require('./newTabComponents/clock')
+const Block = require('./newTabComponents/block')
+const SiteRemovalNotification = require('./newTabComponents/siteRemovalNotification')
+const FooterInfo = require('./newTabComponents/footerInfo')
 const aboutActions = require('./aboutActions')
 const siteUtil = require('../state/siteUtil')
 const siteTags = require('../constants/siteTags')
@@ -262,12 +265,16 @@ class NewTabPage extends React.Component {
     aboutActions.setNewTabDetail({ignoredTopSites: ignoredTopSites})
   }
 
-  restorePinnedSitesList () {
-    // TO-DO: @cezaraugusto
+  onUndoIgnoredSite (e, siteProps) {
+    e.preventDefault()
   }
 
-  restoreIgnoredSitesList () {
-    // TO-DO: @cezaraugusto
+  onRestoreAll (e, siteProps) {
+    e.preventDefault()
+  }
+
+  onClose (e) {
+    e.preventDefault()
   }
 
   componentWillMount () {
@@ -300,26 +307,13 @@ class NewTabPage extends React.Component {
       <div className='content'>
         <main>
           <div className='statsBar'>
-            <ul className='statsContainer'>
-              <li className='statsBlock'>
-                <span className='counter trackers'>{trackedBlockersCount}</span>
-                <span className='statsText' data-l10n-id='trackersBlocked' data-l10n-args={blockedArgs} />
-              </li>
-              <li className='statsBlock'>
-                <span className='counter ads'>{adblockCount}</span>
-                <span className='statsText' data-l10n-id='adsBlocked' data-l10n-args={blockedArgs} />
-              </li>
-              <li className='statsBlock'>
-                <span className='counter https'>{httpsUpgradedCount}</span>
-                <span className='statsText' data-l10n-id='httpsUpgraded' data-l10n-args={blockedArgs} />
-              </li>
-              <li className='statsBlock'>
-                <span className='counter timeSaved'>
-                  {timeSaved.value} <span className='text' data-l10n-id={timeSaved.id} data-l10n-args={timeSaved.args} />
-                </span>
-                <span className='statsText' data-l10n-id='estimatedTimeSaved' />
-              </li>
-            </ul>
+            <Stats
+              blockedArgs={blockedArgs}
+              trackedBlockersCount={trackedBlockersCount}
+              adblockCount={adblockCount}
+              httpsUpgradedCount={httpsUpgradedCount}
+              timeSaved={timeSaved}
+            />
             <Clock />
           </div>
           <div className='topSitesContainer'>
@@ -358,19 +352,15 @@ class NewTabPage extends React.Component {
             </nav>
           </div>
         </main>
-        <footer className='footerContainer'>
-          <div className='copyrightNotice'>
-            <div className='copyrightCredits'>
-              <span className='photoBy' data-l10n-id='photoBy' /> <a className='copyrightOwner' href='http://dksfoto.smugmug.com' target='_blank'>Darrell Sano</a>
-            </div>
-            <span className='photoName'>{backgroundImageName}</span>
-          </div>
-          <nav className='shortcutsContainer'>
-            <a className='shortcutIcon settingsIcon' href={aboutUrls.get('about:preferences')} data-l10n-id='preferencesPage' />
-            <a className='shortcutIcon bookmarksIcon' href={aboutUrls.get('about:bookmarks')} data-l10n-id='bookmarksPage' />
-            <a className='shortcutIcon historyIcon' href={aboutUrls.get('about:history')} data-l10n-id='historyPage' />
-          </nav>
-        </footer>
+        <SiteRemovalNotification />
+        <FooterInfo
+          photoName={backgroundImageName}
+          photographer='Darrell Sano'
+          photographerLink='http://dksfoto.smugmug.com'
+          settingsPage={aboutUrls.get('about:preferences')}
+          bookmarksPage={aboutUrls.get('about:bookmarks')}
+          historyPage={aboutUrls.get('about:history')}
+        />
       </div>
     </div>
   }
