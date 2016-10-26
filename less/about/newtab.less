@@ -264,6 +264,32 @@ ul {
     }
   }
 
+  .siteRemovalNotification {
+    border-radius: @borderRadius;
+    box-shadow: 2px 2px 6px rgba(0,0,0,0.5);
+    background-color: #fff;
+    width: 500px;
+    height: 100px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: auto;
+
+    .notificationText, .siteRemovalAction {
+      margin: 0 6px;
+    }
+
+    .siteRemovalAction {
+      color: @braveOrange;
+      text-decoration: underline;
+    }
+
+    .fa-close {
+      color: @statsRed;
+      margin-left: 12px;
+    }
+  }
+
   .footerContainer {
     display: flex;
     justify-content: space-between;
