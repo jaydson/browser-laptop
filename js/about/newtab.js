@@ -233,7 +233,8 @@ class NewTabPage extends React.Component {
 
   onToggleBookmark (siteProps) {
     const siteDetail = siteUtil.getDetailFromFrame(siteProps, siteTags.BOOKMARK)
-    aboutActions.setBookmarkDetail(siteDetail, siteDetail)
+    const editing = this.isBookmarked(siteProps)
+    aboutActions.setBookmarkDetail(siteDetail, siteDetail, null, editing)
   }
 
   onPinnedSite (siteProps) {
