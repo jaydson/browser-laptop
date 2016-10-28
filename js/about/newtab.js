@@ -18,6 +18,7 @@ const siteUtil = require('../state/siteUtil')
 const siteTags = require('../constants/siteTags')
 const cx = require('../lib/classSet.js')
 const { aboutUrls } = require('../lib/appUrlUtil')
+const config = require('../constants/config')
 
 const ipc = window.chrome.ipc
 
@@ -27,7 +28,9 @@ require('../../node_modules/font-awesome/css/font-awesome.css')
 class NewTabPage extends React.Component {
   constructor () {
     super()
-    this.state = {}
+    this.state = {
+      showSiteRemovalNotification: false
+    }
     ipc.on(messages.NEWTAB_DATA_UPDATED, (e, newTabData) => {
       this.setState({ newTabData: Immutable.fromJS(newTabData || {}) })
     })
@@ -187,6 +190,18 @@ class NewTabPage extends React.Component {
     return this.topSites.take(sitesRow)
   }
 
+  showSiteRemovalNotification () {
+    this.setState({
+      showSiteRemovalNotification: true
+    })
+  }
+
+  hideSiteRemovalNotification () {
+    this.setState({
+      showSiteRemovalNotification: false
+    })
+  }
+
   onChangeGridLayout () {
     // save number of rows on store. gridsLayout starts with 3 rows (large).
     // Rows are reduced at each click and then reset to three again
@@ -251,7 +266,7 @@ class NewTabPage extends React.Component {
   }
 
   onIgnoredTopSite (siteProps) {
-    this.onIgnoredTopSite.isCalled = true
+    this.showSiteRemovalNotification()
 
     const gridSites = this.topSites
     let pinnedTopSites = this.pinnedTopSites
@@ -273,7 +288,7 @@ class NewTabPage extends React.Component {
     ignoredTopSites = ignoredTopSites.splice(-1, 1)
     aboutActions.setNewTabDetail({ignoredTopSites: ignoredTopSites})
 
-    this.onIgnoredTopSite.isCalled = false
+    this.hideSiteRemovalNotification()
   }
 
   onRestoreAll () {
@@ -283,7 +298,7 @@ class NewTabPage extends React.Component {
   }
 
   onCloseNotification () {
-    this.onIgnoredTopSite.isCalled = false
+    this.hideSiteRemovalNotification()
   }
 
   componentWillMount () {
@@ -310,7 +325,6 @@ class NewTabPage extends React.Component {
       trackedBlockersCount: trackedBlockersCount,
       httpsUpgradedCount: httpsUpgradedCount
     })
-    console.log('deve retornar ok -----', this.onIgnoredTopSite.isCalled)
 
     return <div className='dynamicBackground' style={backgroundImage}>
       <div className='gradient' />
@@ -363,9 +377,8 @@ class NewTabPage extends React.Component {
           </div>
         </main>
         {
-          this.onIgnoredTopSite.isCalled
+          this.state.showSiteRemovalNotification
             ? <SiteRemovalNotification
-              isActive={this.onIgnoredTopSite.isCalled}
               onUndoIgnoredTopSite={this.onUndoIgnoredTopSite.bind(this)}
               onRestoreAll={this.onRestoreAll.bind(this)}
               onCloseNotification={this.onCloseNotification.bind(this)}
@@ -374,8 +387,8 @@ class NewTabPage extends React.Component {
         }
         <FooterInfo
           photoName={backgroundImageName}
-          photographer='Darrell Sano'
-          photographerLink='http://dksfoto.smugmug.com'
+          photographer={config.newtab.photographer}
+          photographerLink={config.newtab.photographerLink}
           settingsPage={aboutUrls.get('about:preferences')}
           bookmarksPage={aboutUrls.get('about:bookmarks')}
           historyPage={aboutUrls.get('about:history')}

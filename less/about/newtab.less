@@ -275,6 +275,11 @@ ul {
     justify-content: center;
     margin: auto;
 
+    .notification {
+      -webkit-user-select: none;
+      cursor: default;
+    }
+
     .notificationText, .siteRemovalAction {
       margin: 0 6px;
     }
@@ -282,11 +287,14 @@ ul {
     .siteRemovalAction {
       color: @braveOrange;
       text-decoration: underline;
+      cursor: pointer;
     }
 
     .fa-close {
       color: @statsRed;
       margin-left: 12px;
+      border: 0;
+      background-color: transparent;
     }
   }
 

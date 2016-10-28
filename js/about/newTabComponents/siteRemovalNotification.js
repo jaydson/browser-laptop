@@ -12,11 +12,12 @@ class siteRemovalNotification extends React.Component {
   }
 
   render () {
-    const { isActive, onUndoIgnoredTopSite, onRestoreAll, onCloseNotification } = this.props
+    // TODO: fix me; I removed and then hardcoded isActive because I wasn't sure how it's used
+    const { onUndoIgnoredTopSite, onRestoreAll, onCloseNotification } = this.props
     return <div
       className={cx({
         siteRemovalNotification: true,
-        active: isActive
+        active: true
       })}>
       <span className='notification' data-l10n-id='thumbRemoved' />
       <span className='siteRemovalAction' onClick={onUndoIgnoredTopSite} data-l10n-id='undoRemoved' />

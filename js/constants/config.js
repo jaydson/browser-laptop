@@ -44,5 +44,9 @@ module.exports = {
   braveExtensionId: 'mnojpmjdmbbfmejpflffifhffcmidifd',
   PDFJSExtensionId: 'jdbefljfgobbmcidnmpjamcbhnbphjnb',
   widevineComponentId: 'oimompecagnajdejgnnjijobebaeigek',
-  coinbaseOrigin: 'https://buy.coinbase.com'
+  coinbaseOrigin: 'https://buy.coinbase.com',
+  newtab: {
+    photographer: 'Darrell Sano',
+    photographerLink: 'http://dksfoto.smugmug.com'
+  }
 }
