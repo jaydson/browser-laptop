@@ -237,7 +237,7 @@ class NewTabPage extends React.Component {
     aboutActions.setBookmarkDetail(siteDetail, siteDetail, null, editing)
   }
 
-  onPinnedSite (siteProps) {
+  onPinnedTopSite (siteProps) {
     const gridSites = this.topSites
     let pinnedTopSites = this.pinnedTopSites.setSize(18)
 
@@ -250,7 +250,9 @@ class NewTabPage extends React.Component {
     aboutActions.setNewTabDetail({pinnedTopSites: pinnedTopSites})
   }
 
-  onIgnoredSite (siteProps) {
+  onIgnoredTopSite (siteProps) {
+    this.onIgnoredTopSite.isCalled = true
+
     const gridSites = this.topSites
     let pinnedTopSites = this.pinnedTopSites
     const ignoredTopSites = this.ignoredTopSites.push(siteProps)
@@ -266,16 +268,22 @@ class NewTabPage extends React.Component {
     aboutActions.setNewTabDetail({ignoredTopSites: ignoredTopSites})
   }
 
-  onUndoIgnoredSite (e, siteProps) {
-    e.preventDefault()
+  onUndoIgnoredTopSite () {
+    let ignoredTopSites = this.ignoredTopSites
+    ignoredTopSites = ignoredTopSites.splice(-1, 1)
+    aboutActions.setNewTabDetail({ignoredTopSites: ignoredTopSites})
+
+    this.onIgnoredTopSite.isCalled = false
   }
 
-  onRestoreAll (e, siteProps) {
-    e.preventDefault()
+  onRestoreAll () {
+    // Clear ignoredTopSites and pinnedTopSites list
+    aboutActions.setNewTabDetail({ignoredTopSites: []})
+    aboutActions.setNewTabDetail({pinnedTopSites: []})
   }
 
-  onClose (e) {
-    e.preventDefault()
+  onCloseNotification () {
+    this.onIgnoredTopSite.isCalled = false
   }
 
   componentWillMount () {
@@ -302,6 +310,7 @@ class NewTabPage extends React.Component {
       trackedBlockersCount: trackedBlockersCount,
       httpsUpgradedCount: httpsUpgradedCount
     })
+    console.log('deve retornar ok -----', this.onIgnoredTopSite.isCalled)
 
     return <div className='dynamicBackground' style={backgroundImage}>
       <div className='gradient' />
@@ -342,8 +351,8 @@ class NewTabPage extends React.Component {
                     }
                     style={{backgroundColor: site.get('themeColor')}}
                     onBookmarkedSite={this.onToggleBookmark.bind(this, site)}
-                    onPinnedSite={this.onPinnedSite.bind(this, site)}
-                    onIgnoredSite={this.onIgnoredSite.bind(this, site)}
+                    onPinnedTopSite={this.onPinnedTopSite.bind(this, site)}
+                    onIgnoredTopSite={this.onIgnoredTopSite.bind(this, site)}
                     onDraggedSite={this.onDraggedSite.bind(this)}
                     isPinned={this.isPinned(site)}
                     isBookmarked={this.isBookmarked(site)}
@@ -353,7 +362,16 @@ class NewTabPage extends React.Component {
             </nav>
           </div>
         </main>
-        <SiteRemovalNotification />
+        {
+          this.onIgnoredTopSite.isCalled
+            ? <SiteRemovalNotification
+              isActive={this.onIgnoredTopSite.isCalled}
+              onUndoIgnoredTopSite={this.onUndoIgnoredTopSite.bind(this)}
+              onRestoreAll={this.onRestoreAll.bind(this)}
+              onCloseNotification={this.onCloseNotification.bind(this)}
+              />
+            : null
+        }
         <FooterInfo
           photoName={backgroundImageName}
           photographer='Darrell Sano'

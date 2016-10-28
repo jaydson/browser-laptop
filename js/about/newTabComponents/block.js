@@ -61,7 +61,7 @@ const targetCollect = (connect) => {
 
 class Block extends React.Component {
   render () {
-    const { isDragging, connectDragSource, connectDropTarget, onBookmarkedSite, isBookmarked, onPinnedSite, isPinned, onIgnoredSite, title, href, style, favicon } = this.props
+    const { isDragging, connectDragSource, connectDropTarget, onBookmarkedTopSite, isBookmarked, onPinnedTopSite, isPinned, onIgnoredTopSite, title, href, style, favicon } = this.props
     const opacity = isDragging ? 0 : 1
     const starIcon = isBookmarked ? 'fa-star' : 'fa-star-o'
 
@@ -80,17 +80,17 @@ class Block extends React.Component {
                 fa: true,
                 [starIcon]: true
               })}
-              onClick={onBookmarkedSite}
+              onClick={onBookmarkedTopSite}
               data-l10n-id={isBookmarked ? 'removeBookmarkButton' : 'addBookmarkButton'}
             />
             <button
               className='topSitesActionBtn fa fa-thumb-tack'
-              onClick={onPinnedSite}
+              onClick={onPinnedTopSite}
               data-l10n-id={isPinned ? 'pinTopSiteButton' : 'unpinTopSiteButton'}
             />
             <button
               className='topSitesActionBtn fa fa-close'
-              onClick={onIgnoredSite}
+              onClick={onIgnoredTopSite}
               data-l10n-id='removeTopSiteButton'
             />
           </div>

@@ -3,6 +3,7 @@
  * You can obtain one at http://mozilla.org/MPL/2.0/. */
 
 const React = require('react')
+const cx = require('../../lib/classSet.js')
 
 class siteRemovalNotification extends React.Component {
   constructor () {
@@ -11,11 +12,16 @@ class siteRemovalNotification extends React.Component {
   }
 
   render () {
-    return <div className='siteRemovalNotification'>
+    const { isActive, onUndoIgnoredTopSite, onRestoreAll, onCloseNotification } = this.props
+    return <div
+      className={cx({
+        siteRemovalNotification: true,
+        active: isActive
+      })}>
       <span className='notification' data-l10n-id='thumbRemoved' />
-      <a className='siteRemovalAction' href='#' data-l10n-id='undoRemoved' />
-      <a className='siteRemovalAction' href='#' data-l10n-id='restoreAll' />
-      <a className='fa fa-close' href='#' data-l10n-id='close' />
+      <span className='siteRemovalAction' onClick={onUndoIgnoredTopSite} data-l10n-id='undoRemoved' />
+      <span className='siteRemovalAction' onClick={onRestoreAll} data-l10n-id='restoreAll' />
+      <button className='fa fa-close' onClick={onCloseNotification} data-l10n-id='close' />
     </div>
   }
 }
