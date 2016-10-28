@@ -259,8 +259,8 @@ class NewTabPage extends React.Component {
     const currentPosition = gridSites.filter((site) => siteProps.get('location') === site.get('location')).get(0)
     const currentPositionIndex = gridSites.indexOf(currentPosition)
 
-    // Stores site on ignoredTopSites list, retaining the same position
-    pinnedTopSites = pinnedTopSites.splice(currentPositionIndex, 1, siteProps)
+    // If pinned, leave it null. Otherwise stores site on ignoredTopSites list, retaining the same position
+    pinnedTopSites = pinnedTopSites.splice(currentPositionIndex, 1, this.isPinned(siteProps) ? null : siteProps)
 
     aboutActions.setNewTabDetail({pinnedTopSites: pinnedTopSites})
   }
@@ -295,6 +295,8 @@ class NewTabPage extends React.Component {
     // Clear ignoredTopSites and pinnedTopSites list
     aboutActions.setNewTabDetail({ignoredTopSites: []})
     aboutActions.setNewTabDetail({pinnedTopSites: []})
+
+    this.hideSiteRemovalNotification()
   }
 
   onCloseNotification () {

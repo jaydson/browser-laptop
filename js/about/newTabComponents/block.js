@@ -64,6 +64,7 @@ class Block extends React.Component {
     const { isDragging, connectDragSource, connectDropTarget, onBookmarkedTopSite, isBookmarked, onPinnedTopSite, isPinned, onIgnoredTopSite, title, href, style, favicon } = this.props
     const opacity = isDragging ? 0 : 1
     const starIcon = isBookmarked ? 'fa-star' : 'fa-star-o'
+    const pinIcon = isPinned ? 'fa-minus' : 'fa-thumb-tack'
 
     return connectDragSource(connectDropTarget(
       <div className='topSiteSquareSpace'>
@@ -84,7 +85,11 @@ class Block extends React.Component {
               data-l10n-id={isBookmarked ? 'removeBookmarkButton' : 'addBookmarkButton'}
             />
             <button
-              className='topSitesActionBtn fa fa-thumb-tack'
+              className={cx({
+                topSitesActionBtn: true,
+                fa: true,
+                [pinIcon]: true
+              })}
               onClick={onPinnedTopSite}
               data-l10n-id={isPinned ? 'pinTopSiteButton' : 'unpinTopSiteButton'}
             />
