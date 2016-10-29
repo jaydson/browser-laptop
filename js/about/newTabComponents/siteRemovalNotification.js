@@ -3,14 +3,10 @@
  * You can obtain one at http://mozilla.org/MPL/2.0/. */
 
 const React = require('react')
+const ImmutableComponent = require('../../components/immutableComponent')
 const cx = require('../../lib/classSet.js')
 
-class siteRemovalNotification extends React.Component {
-  constructor () {
-    super()
-    this.state = {}
-  }
-
+class siteRemovalNotification extends ImmutableComponent {
   render () {
     // TODO: fix me; I removed and then hardcoded isActive because I wasn't sure how it's used
     const { onUndoIgnoredTopSite, onRestoreAll, onCloseNotification } = this.props
@@ -26,4 +22,5 @@ class siteRemovalNotification extends React.Component {
     </div>
   }
 }
+
 module.exports = siteRemovalNotification

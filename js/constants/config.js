@@ -46,7 +46,11 @@ module.exports = {
   widevineComponentId: 'oimompecagnajdejgnnjijobebaeigek',
   coinbaseOrigin: 'https://buy.coinbase.com',
   newtab: {
-    photographer: 'Darrell Sano',
-    photographerLink: 'http://dksfoto.smugmug.com'
+    fallbackImage: {
+      name: 'Bay Bridge',
+      source: 'img/newtab_stock_image.jpg',
+      author: 'Darrell Sano',
+      link: 'http://dksfoto.smugmug.com'
+    }
   }
 }
