@@ -75,9 +75,11 @@ class NewTabPage extends React.Component {
     return siteUtil.isSiteBookmarked(this.topSites, siteProps)
   }
 
+  /**
+   * topSites are defined by users. Pinned sites are attached to their positions
+   * in the grid, and the non pinned indexes are populated with newly accessed sites
+   */
   get topSites () {
-    // topSites are defined by users. Pinned sites are attached to their positions
-    // in the grid, and the non pinned indexes are populated with newly accessed sites
     let gridSites = Immutable.List().setSize(18)
     let sites = this.sites
     const pinnedTopSites = this.pinnedTopSites.setSize(gridSites.size)
@@ -124,9 +126,11 @@ class NewTabPage extends React.Component {
     })
   }
 
+  /**
+   * save number of rows on store. gridsLayout starts with 3 rows (large).
+   * Rows are reduced at each click and then reset to three again
+   */
   onChangeGridLayout () {
-    // save number of rows on store. gridsLayout starts with 3 rows (large).
-    // Rows are reduced at each click and then reset to three again
     const gridLayoutSize = this.gridLayoutSize
     const changeGridSizeTo = (size) => aboutActions.setNewTabDetail({gridLayoutSize: size})
 
@@ -162,10 +166,12 @@ class NewTabPage extends React.Component {
     pinnedTopSites = pinnedTopSites.splice(finalPositionIndex, 0, currentPosition)
 
     // If site is pinned, update pinnedTopSites list
+    const newTabState = {}
     if (this.isPinned(currentPosition)) {
-      aboutActions.setNewTabDetail({pinnedTopSites: pinnedTopSites})
+      newTabState.pinnedTopSites = pinnedTopSites
     }
-    aboutActions.setNewTabDetail({sites: gridSites})
+    newTabState.sites = gridSites
+    aboutActions.setNewTabDetail(newTabState)
   }
 
   onToggleBookmark (siteProps) {
@@ -176,12 +182,11 @@ class NewTabPage extends React.Component {
 
   onPinnedTopSite (siteProps) {
     const gridSites = this.topSites
-    let pinnedTopSites = this.pinnedTopSites.setSize(18)
-
     const currentPosition = gridSites.filter((site) => siteProps.get('location') === site.get('location')).get(0)
     const currentPositionIndex = gridSites.indexOf(currentPosition)
 
     // If pinned, leave it null. Otherwise stores site on ignoredTopSites list, retaining the same position
+    let pinnedTopSites = this.pinnedTopSites.setSize(18)
     pinnedTopSites = pinnedTopSites.splice(currentPositionIndex, 1, this.isPinned(siteProps) ? null : siteProps)
 
     aboutActions.setNewTabDetail({pinnedTopSites: pinnedTopSites})
@@ -190,38 +195,31 @@ class NewTabPage extends React.Component {
   onIgnoredTopSite (siteProps) {
     this.showSiteRemovalNotification()
 
-    const gridSites = this.topSites
-    let pinnedTopSites = this.pinnedTopSites
-    const ignoredTopSites = this.ignoredTopSites.push(siteProps)
-
-    const currentPosition = gridSites.filter((site) => siteProps.get('location') === site.get('location')).get(0)
-    const currentPositionIndex = gridSites.indexOf(currentPosition)
-
+    // If a pinnedTopSite is ignored, remove it from the pinned list as well
+    const newTabState = {}
     if (this.isPinned(siteProps)) {
-      // If a pinnedTopSite is ignored, remove it from the pinned list as well
-      pinnedTopSites = pinnedTopSites.splice(currentPositionIndex, 1, null)
-      aboutActions.setNewTabDetail({pinnedTopSites: pinnedTopSites})
+      const gridSites = this.topSites
+      const currentPosition = gridSites.filter((site) => siteProps.get('location') === site.get('location')).get(0)
+      const currentPositionIndex = gridSites.indexOf(currentPosition)
+      const pinnedTopSites = this.pinnedTopSites.splice(currentPositionIndex, 1, null)
+      newTabState.pinnedTopSites = pinnedTopSites
     }
-    aboutActions.setNewTabDetail({ignoredTopSites: ignoredTopSites})
+
+    newTabState.ignoredTopSites = this.ignoredTopSites.push(siteProps)
+    aboutActions.setNewTabDetail(newTabState)
   }
 
   onUndoIgnoredTopSite () {
-    let ignoredTopSites = this.ignoredTopSites
-    ignoredTopSites = ignoredTopSites.splice(-1, 1)
+    const ignoredTopSites = this.ignoredTopSites.splice(-1, 1)
     aboutActions.setNewTabDetail({ignoredTopSites: ignoredTopSites})
-
     this.hideSiteRemovalNotification()
   }
 
+  /**
+   * Clear ignoredTopSites and pinnedTopSites list
+   */
   onRestoreAll () {
-    // Clear ignoredTopSites and pinnedTopSites list
-    aboutActions.setNewTabDetail({ignoredTopSites: []})
-    aboutActions.setNewTabDetail({pinnedTopSites: []})
-
-    this.hideSiteRemovalNotification()
-  }
-
-  onCloseNotification () {
+    aboutActions.setNewTabDetail({ignoredTopSites: [], pinnedTopSites: []})
     this.hideSiteRemovalNotification()
   }
 
@@ -284,7 +282,7 @@ class NewTabPage extends React.Component {
                       : <img src={site.get('favicon')} />
                     }
                     style={{backgroundColor: site.get('themeColor')}}
-                    onBookmarkedSite={this.onToggleBookmark.bind(this, site)}
+                    onToggleBookmark={this.onToggleBookmark.bind(this, site)}
                     onPinnedTopSite={this.onPinnedTopSite.bind(this, site)}
                     onIgnoredTopSite={this.onIgnoredTopSite.bind(this, site)}
                     onDraggedSite={this.onDraggedSite.bind(this)}
@@ -301,7 +299,7 @@ class NewTabPage extends React.Component {
             ? <SiteRemovalNotification
               onUndoIgnoredTopSite={this.onUndoIgnoredTopSite.bind(this)}
               onRestoreAll={this.onRestoreAll.bind(this)}
-              onCloseNotification={this.onCloseNotification.bind(this)}
+              onCloseNotification={this.hideSiteRemovalNotification.bind(this)}
               />
             : null
         }
